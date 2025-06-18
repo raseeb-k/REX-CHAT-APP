@@ -1,34 +1,19 @@
 
-
 trigger:
-- main
+  branches:
+    include:
+      - v3
 
-resources:
-- repo: self
+pool:
+  vmImage: 'ubuntu-latest'
 
-variables:
-  tag: '$(Build.BuildId)'
+steps:
+  - task: Checkout@1
 
-stages:
-- stage: Build
-  displayName: Build image
-  jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      name: ec2-user
-    steps:
-    - task: Docker@2
-      displayName: Build an image
-      inputs:
-        command: build
-        dockerfile: '$(Build.SourcesDirectory)/client/Dockerfile'
-        tags: |
-          $(raseebriyazkhan/rex-app-client)
-    - task: Docker@2
-      displayName: Build an image
-      inputs:
-        command: build
-        dockerfile: '$(Build.SourcesDirectory)/server/Dockerfile'
-        tags: |
-          $(raseebriyazkhan/rex-app-server)
+  - task: DockerInstaller@0
+    inputs:
+      dockerVersion: 'latest'
+
+  - script: |
+      docker-compose up --build -d
+    displayName: 'Build and run docker-compose'
