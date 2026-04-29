@@ -6,7 +6,7 @@ COPY . /app
 CMD ["npm","run","start"] 
 
 #STAGE 2
-FROM node:21
+FROM node:20
 WORKDIR /app
 COPY --from=builder /app /app
 
